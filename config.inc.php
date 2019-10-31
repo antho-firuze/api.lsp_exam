@@ -78,12 +78,6 @@ if (! isset($path[$http_host]))
 	$f->bare_response(FALSE, ['message' => "Domain name <strong>$http_host</strong> :: Default PATH is not defined !"]);
 
 define('PATH', $path[$http_host]);
-
-// if (in_array($http_host, $domain_live)) {
-// 	$api_url = PROTOCOL.HTTP_HOST; 	// 'https://api.simpipro.com';
-// } else {
-// 	$api_url = PROTOCOL.HTTP_HOST; 	// 'http://'.$http_host.':5050';
-// }
 define('REPOS_URL', BASE_URL.'__repository'.SEPARATOR);
 define('REPOS_DIR', __dir__.DIRECTORY_SEPARATOR.'__repository'.DIRECTORY_SEPARATOR);
 define('API_URL', BASE_URL);
@@ -110,15 +104,6 @@ $database_localhost = [
 	'' => 'online_certification',				// for php cli execute. etc: mail_service
 	8001 => 'online_certification',
 ];
-/* $database = [
-	'localhost' 				=> $database_localhost[$http_port],
-	'api.simpipro.com' 			=> '',
-	'system-api.simpipro.com' 	=> 'simpi_system',
-	'gateway-api.simpipro.com' 	=> 'simpi_gateway',
-	'olap-api.simpipro.com' 	=> 'simpi_olap',
-	'market-api.simpipro.com' 	=> 'simpi_market',
-	'master-api.simpipro.com' 	=> 'simpi_master',
-]; */
 $database = [
 	'localhost' 				=> $database_localhost[$http_port],
 	'127.0.0.1' 				=> $database_localhost[$http_port],
