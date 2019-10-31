@@ -23,9 +23,7 @@ if (strpos($http_host, ':') > -1)
 /* List available domain */
 $domain_devel = ['localhost','127.0.0.1','192.168.1.33','192.168.43.72','192.168.100.105'];
 $domain_live = [
-	'simpipro.com',
-	'api.simpipro.com',
-	'api.kenziotech.com',
+	'api.lsp-ps.id',
 ];
 $domain = array_merge($domain_devel, $domain_live);
 if (!in_array($http_host, $domain))
@@ -74,9 +72,7 @@ $path = [
 	'127.0.0.1' 				=> $path_localhost[$http_port],
 	'192.168.1.33' 			=> $path_localhost[$http_port],
 	'192.168.43.72' 		=> $path_localhost[$http_port],
-	'simpipro.com' 				=> 'frontend',
-	'api.simpipro.com' 			=> 'jsonrpc',
-	'api.kenziotech.com' 			=> 'jsonrpc',
+	'api.lsp-ps.id' 			=> 'jsonrpc',
 ];
 if (! isset($path[$http_host]))
 	$f->bare_response(FALSE, ['message' => "Domain name <strong>$http_host</strong> :: Default PATH is not defined !"]);
@@ -102,9 +98,7 @@ $prefix = [
 	'127.0.0.1' 				=> $prefix_localhost[$http_port],
 	'192.168.1.33' 			=> $prefix_localhost[$http_port],
 	'192.168.43.72' 		=> $prefix_localhost[$http_port],
-	'api.simpipro.com' 			=> 'wl-api',
-	'system-api.simpipro.com' 	=> 'system-api',
-	'api.kenziotech.com' 		=> 'dalwa-api',
+	'api.lsp-ps.id' 			=> 'exam-api',
 ];
 if (! isset($prefix[$http_host]))
 	$f->bare_response(FALSE, ['message' => "Domain name <strong>$http_host</strong> :: Prefix folder is not defined !"]);
@@ -130,31 +124,10 @@ $database = [
 	'127.0.0.1' 				=> $database_localhost[$http_port],
 	'192.168.1.33' 			=> $database_localhost[$http_port],
 	'192.168.43.72' 		=> $database_localhost[$http_port],
-	'api.simpipro.com' 			=> '',
-	'system-api.simpipro.com' 	=> 'simpi',
-	'api.kenziotech.com' 		=> 'db_dalwa',
+	'api.lsp-ps.id' 			=> '',
 ];
 if (! isset($database[$http_host]))
 	$f->bare_response(FALSE, ['message' => "Domain name <strong>$http_host</strong> :: Database is not defined !"]);
 
 define('DATABASE_NAME', $database[$http_host]);
-
-define('API_GATEWAY',   IS_LOCAL ? 'http://localhost:5051' : 'https://gateway-api.simpipro.com');
-define('API_GL', 		IS_LOCAL ? 'http://localhost:5052' : 'https://gl-api.simpipro.com');
-define('API_INVEST', 		IS_LOCAL ? 'http://localhost:5052' : 'https://invest-api.simpipro.com');
-define('API_POS', 		IS_LOCAL ? 'http://localhost:5052' : 'https://pos-api.simpipro.com');
-define('API_YUKBAJALAN', 		IS_LOCAL ? 'http://localhost:5052' : 'https://yukbajalan-api.simpipro.com');
-define('API_SYSTEM', 	IS_LOCAL ? 'http://localhost:5053' : 'https://system-api.simpipro.com');
-define('API_MARKET', 	IS_LOCAL ? 'http://localhost:5054' : 'https://market-api.simpipro.com');
-define('API_MASTER', 	IS_LOCAL ? 'http://localhost:5055' : 'https://master-api.simpipro.com');
-define('API_SHARIA', 	IS_LOCAL ? 'http://localhost:5055' : 'https://sharia-api.simpipro.com');
-
 define('DATABASE_SYSTEM', 'lsp-exam');
-define('DATABASE_MARKET', 'simpi');
-define('DATABASE_MASTER', 'simpi');
-define('DATABASE_GL', 'simpi');
-define('DATABASE_INVEST', 'simpi');
-define('DATABASE_POS', 'simpi');
-define('DATABASE_YUKBAJALAN', 'simpi');
-define('DATABASE_GATEWAY', 'simpi');
-define('DATABASE_SHARIA', 'simpi');
