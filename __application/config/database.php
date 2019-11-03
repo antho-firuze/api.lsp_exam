@@ -1,20 +1,19 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-$active_group = '';
+$active_group = 'default';
 $query_builder = TRUE;
 
-$db['lsp-exam'] = array(
-	'dsn'	=> '',
-	'hostname' => '127.0.0.1',
-	'username' => 'root',
-	'password' => 'Admin123',
-	'database' => 'online_certification',
-	'dbdriver' => 'mysqli',
-	'port' 	   => '3306',
+$db['default'] = array(
+	'dsn'	=> DB_DSN,
+	'hostname' => DB_HOSTNAME,
+	'username' => DB_USERNAME,
+	'password' => DB_PASSWORD,
+	'database' => DB_DATABASE,
+	'dbdriver' => DB_DRIVER,
+	'port' 	   => DB_PORT,
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => FALSE,
-	// 'db_debug' => IS_LOCAL,
+	'db_debug' => DB_DEBUG,
 	'cache_on' => FALSE,
 	'cachedir' => '',
 	'char_set' => 'utf8',

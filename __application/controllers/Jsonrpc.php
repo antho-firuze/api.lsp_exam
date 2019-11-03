@@ -309,7 +309,7 @@ class Jsonrpc extends CI_Controller
 		if (empty($request->method))
 			return $this->f->response(FALSE, ['message' => $this->f->_err_msg('err_method_unknown', 'null'), 'id' => (isset($request->id) ? $request->id : null)], FALSE, FALSE);
 
-		$this->lang->load(['auth','simpi'], $request->idiom);
+		$this->lang->load(['auth'], $request->idiom);
 		
 		// =================== Check is valid method ======================
 		$parseMethod = explode('.', $request->method);
