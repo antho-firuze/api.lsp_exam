@@ -6,6 +6,7 @@ class Auth_model extends CI_Model
 	private $table_session = 'login_session';					 
 	private $login_token_expiration = 60*60*24; // second*minute*hour
 
+	private $hash_method = 'bcrypt';	// sha1 or bcrypt, bcrypt is STRONGLY recommended
 	private $min_password_length = 5;
 	private $max_password_length = 0;
 	private $max_login_attempts = 3;
@@ -16,6 +17,10 @@ class Auth_model extends CI_Model
 	{
 		parent::__construct();
 		$this->load->database();
+
+		$params['rounds'] 		 = 8;
+		$params['salt_prefix'] = version_compare(PHP_VERSION, '5.3.7', '<') ? '$2a$' : '$2y$';
+		$this->load->library('bcrypt',$params);
 	}
 	
 	/**
@@ -44,7 +49,29 @@ class Auth_model extends CI_Model
 	
 	private function is_correct_password($password1, $password2)
 	{
-		return md5($password1) == $password2;
+		// bcrypt
+		if ($this->hash_method == 'bcrypt')
+		{
+			$cbnUser = substr($password2, 0, 5) === '$1c3N' ? TRUE : FALSE; 
+
+			if ($cbnUser) {
+				$password1 = hash_hmac('sha1', $password1, 'R@z3rl0ck');
+				$password2 = substr_replace($password2, '', 0, 5);
+			}
+
+			if ($this->bcrypt->verify($password1, $password2))
+			{
+				return TRUE;
+			}
+
+			return FALSE;
+		}
+
+		// md5
+		if ($this->hash_method == 'md5')
+		{
+			return md5($password1) == $password2;
+		}
 	}
 	
 	/**
@@ -59,11 +86,14 @@ class Auth_model extends CI_Model
 		list($success, $return) = $this->f->check_param_required($request, ['username','password']);
 		if (!$success) return [FALSE, $return];
 
-		if (!$result = $this->db->get_where($this->table_user, ['username' => $request->params->username, 'active' => 1]))
+		if (!$result = $this->db->get_where($this->table_user, ['username' => $request->params->username]))
 			return [FALSE, ['message' => 'Database Error: '.$this->db->error()['message']]];		
 
 		if (!$row = $result->row()) 
 			return [FALSE, ['message' => $this->f->_err_msg('err_username_or_email_not_found')]];
+		
+		if (!$row->active) 
+			return [FALSE, ['message' => $this->f->_err_msg('err_username_or_email_not_active')]];
 		
 		if ((integer)$row->login_try >= $this->max_login_attempts){
 			$this->load->helper('mydate');

@@ -266,13 +266,10 @@ class F {
 	function is_valid_token($request)
 	{
 		$ci =& get_instance();
-		$ci->db->select('a.app_id, a.agent, a.token_expired, b.client_id, b.login_id, b.username, b.password, b.full_name, b.email, c.code as app_code, c.name as app_name');
-		$ci->db->from('a_session a');
-		$ci->db->join('a_login b', 'b.login_id = a.login_id');  
-		$ci->db->join('a_application c', 'c.app_id = a.app_id');  
-		$ci->db->where('a.token', $request->token);
-		$ci->db->where('a.agent', $request->agent);
-		$ci->db->where('c.code', $request->appcode);
+		$ci->db->select('*');
+		$ci->db->from('login_session');
+		$ci->db->where('token', $request->token);
+		$ci->db->where('agent', $request->agent);
 		if (! $result = $ci->db->get())
 			return [FALSE, ['message' => 'Database Error: '.$ci->db->error()['message']]];		
 
@@ -282,13 +279,7 @@ class F {
 		if ($row->token_expired < date('Y-m-d H:i:s'))
 			return [FALSE, ['message' => F::_err_msg('err_token_invalid'), 'need_login' => 'true']];
 		
-		$request->app_id = $row->app_id;
-		$request->app_code = $row->app_code;
-		$request->app_name = $row->app_name;
-		$request->client_id = $row->client_id;
-		$request->login_id = $row->login_id;
-		$request->full_name = $row->full_name;
-		$request->email = $row->email;
+		$request->user_id = $row->user_id;
 		return [TRUE, NULL];
 	}
 
