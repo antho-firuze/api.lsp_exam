@@ -108,7 +108,7 @@ class Exam_model extends CI_Model
 		if ($row->is_activated)
 			return [FALSE, ['message' => $this->f->_err_msg('err_member_has_been_activated')]];
 
-		// $DB->update('pendaftaran_detail', ['is_activated' => 1], ['no_ktp' => $request->params->card_no]);
+		$DB->update('pendaftaran_detail', ['is_activated' => 1], ['no_ktp' => $request->params->card_no]);
 		
 		return [TRUE, ['message' => $this->f->_err_msg('success_member_activated')]];
 	}
