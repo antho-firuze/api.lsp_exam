@@ -43,6 +43,15 @@
  *
  * Load your environment file...
  */
+	if (! file_exists(__DIR__.'/../env.php'))
+	{
+		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+		exit(json_encode([
+			'status' => FALSE, 
+			'message' => "env.php does not exist."
+		]));
+	}
+
 	require_once __DIR__.'/../env.php';
 
 /*
@@ -324,7 +333,10 @@ switch (ENVIRONMENT)
  * into the script here so that we do not have to worry about the
  * loading of any our classes "manually". Feels great to relax.
  */
-require_once __DIR__.'/../vendor/autoload.php';
+if (file_exists(__DIR__.'/../vendor/autoload.php')) 
+{
+	require_once(__DIR__.'/../vendor/autoload.php'); 
+}
 
 /*
  * --------------------------------------------------------------------
