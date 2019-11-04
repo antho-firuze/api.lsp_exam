@@ -10,7 +10,7 @@ class Scheduler extends CI_Controller
 {
 	function __construct(){
 		parent::__construct();
-		$this->load->database('cloud_simpi');
+		$this->load->database();
         $this->load->library('f');
         $this->load->helper('logger');
 	}
@@ -68,6 +68,7 @@ class Scheduler extends CI_Controller
 
     function test()
     {
-        die($this->f->get_ip_address());
+        die(HTTP_METHOD);
+        die($this->f->gen_pwd(8));
     }
 }
