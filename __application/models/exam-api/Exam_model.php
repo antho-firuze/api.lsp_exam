@@ -108,7 +108,7 @@ class Exam_model extends CI_Model
 	function start($request)
 	{
 		// Buat nyimpan data lokasi & mulai start ujian apa? Table Exam_logs, Exam_results, Schedule participant
-		list($success, $return) = $this->f->check_param_required($request, ['username','password','coordinate','start_time']);
+		list($success, $return) = $this->f->check_param_required($request, ['username','password','coordinate','date_client','time_client']);
 		if (!$success) return [FALSE, $return];
 
 		list($success, $return) = $this->is_valid_auth($request);
@@ -119,11 +119,14 @@ class Exam_model extends CI_Model
 			from schedule_participants t1
 			left join schedule_requests t2 on t1.schedule_request_id = t2.id
 			left join schedules t3 on t2.schedule_id = t3.id
-			where member_id = ? limit 1
+			where member_id = ? and t3.date = ? and t3.begin <= ? limit 1
 		) g0';
-		$table = $this->f->compile_qry($str, [$request->member_id]);
-		$this->db->from($table);
-		$schedule = $this->db->get()->row();
+		$table = $this->f->compile_qry($str, [$request->member_id, $request->params->date_client, $request->params->time_client]);
+		if (!$result = $this->db->from($table)->get())
+			return [FALSE, ['message' => 'Database Error: '.$this->db->error()['message']]];
+
+		if ($schedule = $result->row())
+			return [FALSE, ['message' => $this->f->_err_msg('err_not_in_schedule')]];
 
 		$str = "(
 			SELECT * FROM exam_results
@@ -143,7 +146,7 @@ class Exam_model extends CI_Model
 			$result = $this->db->insert('exam_logs', [
 				'schedule_request_id' => $schedule->schedule_request_id, 
 				'member_id' => $request->member_id, 
-				'state' => '{"name":"start_exam","activity":"confirmation","time_client":"'.$request->params->start_time.'"}', 
+				'state' => '{"name":"start_exam","activity":"confirmation","date_client":"'.$request->params->date_client.'","time_client":"'.$request->params->time_client.'"}', 
 				'user_agent' => $request->agent,
 				'coordinate' => $request->params->coordinate,
 				'created_on' => strtotime(date('Y-m-d H:i:s')),
@@ -151,9 +154,9 @@ class Exam_model extends CI_Model
 			if (!$result)
 				return [FALSE, ['message' => 'Database Error: '.$this->db->error()['message']]];
 
-			return [TRUE, ['result' => ['start_time' => $request->params->start_time]]];
+			return [TRUE, ['result' => ['date_client' => $request->params->date_client, 'time_client' => $request->params->time_client]]];
 		} else {
-			return [TRUE, ['result' => ['start_time' => (new DateTime("@$exam_results->begin"))->format('Y-m-d H:i:s')]]];
+			return [TRUE, ['result' => ['date_client' => (new DateTime("@$exam_results->begin"))->format('Y-m-d'), 'time_client' => (new DateTime("@$exam_results->begin"))->format('H:i:s')]]];
 		} 
 
 	}
@@ -205,7 +208,7 @@ class Exam_model extends CI_Model
 	function finish($request)
 	{
 		// Buat nyimpan data lokasi & mulai start ujian apa? Table Exam_logs, Exam_results, Schedule participant
-		list($success, $return) = $this->f->check_param_required($request, ['username','password','coordinate','finish_time']);
+		list($success, $return) = $this->f->check_param_required($request, ['username','password','coordinate','date_client','time_client']);
 		if (!$success) return [FALSE, $return];
 
 		list($success, $return) = $this->is_valid_auth($request);
@@ -251,7 +254,7 @@ class Exam_model extends CI_Model
 			$result = $this->db->insert('exam_logs', [
 				'schedule_request_id' => $schedule->schedule_request_id, 
 				'member_id' => $request->member_id, 
-				'state' => '{"name":"finish_exam","activity":"confirmation","time_client":"'.$request->params->finish_time.'"}', 
+				'state' => '{"name":"finish_exam","activity":"confirmation","date_client":"'.$request->params->date_client.'","time_client":"'.$request->params->time_client.'"}', 
 				'user_agent' => $request->agent,
 				'coordinate' => $request->params->coordinate,
 				'created_on' => strtotime(date('Y-m-d H:i:s')),
@@ -259,10 +262,10 @@ class Exam_model extends CI_Model
 			if (!$result)
 				return [FALSE, ['message' => 'Database Error: '.$this->db->error()['message']]];
 
-			return [TRUE, ['result' => ['finish_time' => $request->params->finish_time]]];
+			return [TRUE, ['result' => ['date_client' => $request->params->date_client, 'time_client' => $request->params->time_client]]];
 		} else {
 			$state = json_decode($exam_log->state);
-			return [TRUE, ['result' => ['finish_time' => $state->time_client]]];
+			return [TRUE, ['result' => ['date_client' => $state->date_client, 'time_client' => $state->time_client]]];
 		}
 	}
 

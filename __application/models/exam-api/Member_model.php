@@ -23,9 +23,9 @@ class Member_model extends CI_Model
 			return [FALSE, ['message' => $this->f->_err_msg('err_member_not_found')]];
 
 		if ($row->is_activated)
-			return [TRUE, ['message' => $this->f->_err_msg('err_member_has_been_activated')]];
+			return [TRUE, ['message' => $this->f->_err_msg('info_member_has_been_activated')]];
 
-		return [FALSE, ['message' => $this->f->_err_msg('err_member_not_activated_yet')]];
+		return [FALSE, ['message' => $this->f->_err_msg('info_member_not_activated_yet')]];
 	}
 
 	function activate($request)
